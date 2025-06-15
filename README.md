@@ -70,7 +70,6 @@ lockbox/
 ├── app.py              # Main Flask application
 ├── test_lockbox.py     # Test suite
 ├── requirements.txt    # Python dependencies
-├── setup.sh           # Easy setup script
 ├── Dockerfile         # Docker configuration
 ├── docker-compose.yml # Docker Compose config
 ├── static/            # CSS, JS, images
