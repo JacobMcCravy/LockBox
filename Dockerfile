@@ -12,6 +12,6 @@ RUN mkdir -p /app/data
 ENV DATABASE_PATH=/app/data/lockbox.db
 ENV FLASK_APP=app.py
 
-EXPOSE 5000
+EXPOSE 5001
 
 CMD ["python", "-m", "flask", "run", "--host=0.0.0.0"]
