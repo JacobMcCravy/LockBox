@@ -30,3 +30,20 @@ jobs:
     - name: Run tests
       run: |
         python test_lockbox.py
+    
+    - name: Test Flask app startup (Unix only)
+      if: matrix.os != 'windows-latest'
+      run: |
+        # Start the app in background
+        python app.py &
+        APP_PID=$!
+        
+        # Wait for app to start
+        sleep 5
+        
+        # Check if app is responding
+        curl -f http://localhost:5001 || exit 1
+        
+        # Kill the app
+        kill $APP_PID || true
+      shell: bash
