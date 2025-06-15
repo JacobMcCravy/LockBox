@@ -135,11 +135,11 @@ if __name__ == "__main__":
         test_encryption()
         
         print("\n" + "=" * 40)
-        print("🎉 All tests passed!")
+        print("All tests passed!")
         
     except AssertionError as e:
-        print(f"\n❌ Test failed: {e}")
+        print(f"\nTest failed: {e}")
         exit(1)
     except Exception as e:
-        print(f"\n❌ Error during testing: {e}")
+        print(f"\nError during testing: {e}")
         exit(1)
