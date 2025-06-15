@@ -15,18 +15,7 @@ A secure, portable password manager that works on Windows, Mac, and Linux. No da
 
 ## Quick Start
 
-### Option 1: Setup Script
-```bash
-# Clone the repository
-git clone https://github.com/JacobMcCravy/LockBox.git
-cd LockBox
-
-# Run setup script
-chmod +x setup.sh
-./setup.sh
-```
-
-### Option 2: Manual Setup
+### Option 1: Manual Setup
 ```bash
 # Clone the repository
 git clone https://github.com/JacobMcCravy/LockBox.git
@@ -48,7 +37,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-### Option 3: Docker
+### Option 2: Docker
 ```bash
 docker compose up -d
 ```
