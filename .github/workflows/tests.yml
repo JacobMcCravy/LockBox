@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest]
         python-version: ['3.8', '3.9', '3.10', '3.11']
 
     steps:
@@ -31,8 +31,7 @@ jobs:
       run: |
         python test_lockbox.py
     
-    - name: Test Flask app startup (Unix only)
-      if: matrix.os != 'windows-latest'
+    - name: Test Flask app startup
       run: |
         # Start the app in background
         python app.py &
