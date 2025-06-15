@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>{% block title %}Password Manager{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body>
+  <header class="top-nav">
+    <!-- Left side: just LockBox -->
+    <div class="nav-left" style="display:flex; align-items:center;">
+      <a href="{{ url_for('dashboard') }}" class="app-name">LockBox</a>
+    </div>
+
+    <!-- Right side: Logout or Login/Register -->
+    <div class="nav-right" style="display:flex; align-items:center; gap:0.5rem;">
+      {% if current_user.is_authenticated %}
+        <form action="{{ url_for('logout') }}" method="post" style="display:inline;">
+          <button
+            type="submit"
+            style="background:none;border:none;color:var(--color-highlight);
+                   font-size:1rem;font-weight:600;padding:0 0.8rem;cursor:pointer;"
+          >
+            Logout
+          </button>
+        </form>
+      {% else %}
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('register') }}">Register</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <div class="container">
+    {% with messages = get_flashed_messages() %}
+      {% for msg in messages %}
+        <div class="flash">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

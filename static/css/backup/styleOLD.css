@@ -1,0 +1,274 @@
+/* static/css/style.css */
+
+/* —————————————————————————————————————————
+   Root & Global
+————————————————————————————————————————— */
+:root {
+  --color-bg-start: #0F172A;
+  --color-bg-end:   #1E293B;
+  --color-card-bg:  rgba(15, 23, 42, 0.85);
+  --color-accent:   #3B82F6;
+  --color-highlight:#FBBF24;
+  --color-text:     #E2E8F0;
+  --color-input-bg: rgba(255, 255, 255, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--color-text);
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.05) 0,
+      rgba(255,255,255,0.05) 2px,
+      transparent 2px,
+      transparent 8px
+    ),
+    linear-gradient(135deg, var(--color-bg-start), var(--color-bg-end));
+  overflow-x: hidden;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* —————————————————————————————————————————
+   Top Navigation Bar
+————————————————————————————————————————— */
+.top-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 1rem;
+  background: rgba(15,23,42,0.8);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+}
+
+.top-nav .logo-container {
+  display: flex;
+  align-items: center;
+}
+.top-nav .logo-container img.nav-logo {
+  height: 1.75rem;
+  width: auto;
+  margin-right: 0.5rem;
+}
+.top-nav .logo-container .app-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-highlight);
+}
+
+.top-nav .nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.top-nav .nav-links a,
+.top-nav .nav-links form button {
+  padding: 0.5rem 1rem;
+  background: rgba(255,255,255,0.1);
+  color: var(--color-text);
+  border: 2px solid var(--color-highlight);
+  border-radius: 0.25rem;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s;
+}
+.top-nav .nav-links a:hover,
+.top-nav .nav-links form button:hover {
+  background: var(--color-highlight);
+  color: #0F172A;
+}
+
+/* —————————————————————————————————————————
+   Login / Register Card
+————————————————————————————————————————— */
+.login-card,
+.register-card {
+  background: var(--color-card-bg);
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  margin-top: 4rem; /* clear the nav */
+}
+
+.login-card img.logo,
+.register-card img.logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.5rem;
+  border: 2px solid transparent;
+  border-radius: 0.5rem;
+  background: var(--color-input-bg);
+  color: var(--color-text);
+  transition: border-color 0.2s;
+}
+input:focus {
+  outline: none;
+  border-color: var(--color-highlight);
+}
+
+button {
+  margin-top: 1.75rem;
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--color-highlight);
+  color: #0F172A;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+}
+
+.show-password {
+  display: flex;
+  align-items: center;
+  margin-top: 0.25rem;
+  cursor: pointer;
+  user-select: none;
+}
+.show-password input[type="checkbox"] {
+  display: none;
+}
+.show-password span {
+  font-size: 0.85rem;
+  color: var(--color-highlight);
+}
+
+/* —————————————————————————————————————————
+   Dashboard Card & Scrollable List
+————————————————————————————————————————— */
+.dashboard-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 2rem 0;
+}
+
+.dashboard-card {
+  background: var(--color-card-bg);
+  padding: 2.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 15px 45px rgba(0,0,0,0.5);
+  width: 90%;
+  max-width: 1200px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  margin-top: 4rem; /* clear the nav */
+}
+
+/* Fix the dashboard logo size */
+.dashboard-card img.logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-header {
+  font-size: 2rem;
+  font-weight: 600;
+  border-bottom: 3px solid var(--color-highlight);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.scrollable-entries {
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 0.5rem;
+  margin-bottom: 1rem;
+  max-height: calc(4 * 3.5rem);
+}
+
+.entry-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.entry-table th,
+.entry-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(226,232,240,0.2);
+}
+
+.entry-table th {
+  background: rgba(255,255,255,0.1);
+  font-weight: 500;
+}
+
+.entry-table tr:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.actions a {
+  background: var(--color-highlight);
+  color: #0F172A;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.actions a:hover {
+  background: var(--color-accent);
+}
+
+/* Webkit scrollbar */
+.scrollable-entries::-webkit-scrollbar {
+  width: 8px;
+}
+.scrollable-entries::-webkit-scrollbar-thumb {
+  background: rgba(226,232,240,0.3);
+  border-radius: 4px;
+}

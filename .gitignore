@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Flask
+instance/
+.webassets-cache
+
+# Environment variables - IMPORTANT: Contains encryption keys!
+.env
+.env.local
+.env.*.local
+
+# Database - Don't commit user data
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# Logs
+*.log
+logs/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Backups
+backups/*.db
+backups/*.env
+*.backup
+*.bak
+
+# Docker
+.dockerignore
+
+# But DO include these:
+!data/.gitkeep
+!backups/.gitkeep
+!.github/

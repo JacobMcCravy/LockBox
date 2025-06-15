@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>{% block title %}Password Manager{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <style>
+    /* Flash message styling */
+    .flash-container {
+      position: fixed;
+      top: 4rem;
+      right: 1rem;
+      z-index: 1100;
+      max-width: 400px;
+    }
+    
+    .flash {
+      padding: 1rem 1.5rem;
+      margin-bottom: 0.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    .flash.success {
+      background: #10b981;
+      color: white;
+    }
+    
+    .flash.error {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .flash.info {
+      background: #3b82f6;
+      color: white;
+    }
+    
+    .flash.warning {
+      background: #f59e0b;
+      color: white;
+    }
+    
+    /* Navigation hover effects */
+    .nav-right a:hover {
+      color: var(--color-highlight) !important;
+    }
+    
+    .nav-right button:hover {
+      color: var(--color-accent) !important;
+    }
+    
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+
+  </style>
+</head>
+<body>
+  <header class="top-nav" style="position: fixed; top: 0; left: 0; right: 0; height: 3rem; 
+                                   background: rgba(15,23,42,0.95); backdrop-filter: blur(10px); 
+                                   z-index: 1000; display: flex; justify-content: space-between; 
+                                   align-items: center; padding: 0 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
+    <!-- Left side: just LockBox -->
+    <div class="nav-left" style="display:flex; align-items:center;">
+      <a href="{{ url_for('dashboard') if current_user.is_authenticated else url_for('index') }}" 
+         class="app-name" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+        <span style="color: var(--color-highlight); font-weight: 600; font-size: 1.2rem;">LockBox</span>
+      </a>
+    </div>
+
+    <!-- Right side: Settings and Logout -->
+    <div class="nav-right" style="display:flex; align-items:center; gap:0.5rem;">
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('settings') }}" 
+           style="background:none;border:none;color:var(--color-text);
+                  font-size:1rem;font-weight:600;padding:0.5rem 1rem;cursor:pointer;
+                  text-decoration:none;display:flex;align-items:center;height:100%;
+                  line-height:1;transition:color 0.2s;">
+          Settings
+        </a>
+        <form action="{{ url_for('logout') }}" method="post" style="display:flex; align-items:center; margin:0;">
+          <button
+            type="submit"
+            style="background:none;border:none;color:var(--color-highlight);
+                   font-size:1rem;font-weight:600;padding:0.5rem 1rem;cursor:pointer;
+                   display:flex;align-items:center;height:100%;margin:0;line-height:1;
+                   transition:color 0.2s;"
+          >
+            Logout
+          </button>
+        </form>
+      {% else %}
+        <a href="{{ url_for('login') }}" style="padding: 0.5rem 1rem;">Login</a>
+        <a href="{{ url_for('register') }}" style="padding: 0.5rem 1rem;">Register</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <div class="flash-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, msg in messages %}
+        <div class="flash {{ category }}">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+  </div>
+
+  <div class="container">
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

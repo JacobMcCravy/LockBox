@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LockBox — Register</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    .flash-container {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1100;
+      max-width: 400px;
+    }
+    
+    .flash {
+      padding: 1rem 1.5rem;
+      margin-bottom: 0.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    .flash.success {
+      background: #10b981;
+      color: white;
+    }
+    
+    .flash.error {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .flash.info {
+      background: #3b82f6;
+      color: white;
+    }
+    
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    /* Password Requirements Styling */
+    .password-requirements {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      margin: 0.5rem 0 1rem 0;
+      font-size: 0.85rem;
+    }
+    
+    .requirement {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0;
+      color: #94a3b8;
+      transition: color 0.3s ease;
+    }
+    
+    .requirement .indicator {
+      font-size: 1rem;
+      transition: color 0.3s ease;
+    }
+    
+    .requirement.met {
+      color: #10b981;
+    }
+    
+    .requirement.met .indicator {
+      color: #10b981;
+    }
+    
+    .requirement.not-met {
+      color: #ef4444;
+    }
+    
+    .requirement.not-met .indicator {
+      color: #ef4444;
+    }
+    
+    /* Show password styling */
+    .show-password {
+      display: flex;
+      align-items: center;
+      margin-top: 0.5rem;
+      user-select: none;
+    }
+    
+    .show-password input[type="checkbox"] {
+      margin-right: 0.5rem;
+      cursor: pointer;
+    }
+    
+    .show-password label {
+      font-size: 0.85rem;
+      color: var(--color-highlight);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="flash-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, msg in messages %}
+        <div class="flash {{ category }}">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+  </div>
+  
+  <div class="register-card">
+    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="LockBox Logo" class="logo">
+    <form action="/register" method="POST">
+      <label for="username">Username</label>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        placeholder="Choose a username"
+        required
+      >
+
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        placeholder="Enter your email"
+        required
+      >
+
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        placeholder="Create a password"
+        required
+        oninput="checkPasswordStrength()"
+      >
+      
+      <div class="password-requirements" id="password-requirements">
+        <p style="font-size: 0.85rem; margin: 0.5rem 0; color: var(--color-text);">Password must contain:</p>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <li id="req-length" class="requirement">
+            <span class="indicator">○</span> At least 8 characters
+          </li>
+          <li id="req-uppercase" class="requirement">
+            <span class="indicator">○</span> One uppercase letter
+          </li>
+          <li id="req-lowercase" class="requirement">
+            <span class="indicator">○</span> One lowercase letter
+          </li>
+          <li id="req-number" class="requirement">
+            <span class="indicator">○</span> One number
+          </li>
+          <li id="req-special" class="requirement">
+            <span class="indicator">○</span> One special character (!@#$%^&*...)
+          </li>
+        </ul>
+      </div>
+
+      <label for="confirm-password">Confirm Password</label>
+      <input
+        type="password"
+        id="confirm-password"
+        name="confirm_password"
+        placeholder="Confirm your password"
+        required
+      >
+      <div class="show-password">
+        <input type="checkbox" id="toggle-register" onchange="togglePassword()">
+        <label for="toggle-register" style="cursor: pointer; margin: 0;">Show Passwords</label>
+      </div>
+
+      <button type="submit">Register</button>
+      <p class="login-link">
+        Already have an account? <a href="/login">Log In</a>
+      </p>
+    </form>
+  </div>
+
+  <script>
+    function togglePassword() {
+      const pwd = document.getElementById('password');
+      const confirm = document.getElementById('confirm-password');
+      const checkbox = document.getElementById('toggle-register');
+      pwd.type = checkbox.checked ? 'text' : 'password';
+      confirm.type = checkbox.checked ? 'text' : 'password';
+    }
+    
+    function checkPasswordStrength() {
+      const password = document.getElementById('password').value;
+      const requirements = {
+        'req-length': password.length >= 8,
+        'req-uppercase': /[A-Z]/.test(password),
+        'req-lowercase': /[a-z]/.test(password),
+        'req-number': /\d/.test(password),
+        'req-special': /[!@#$%^&*(),.?":{}|<>]/.test(password)
+      };
+      
+      // Update each requirement's visual state
+      for (const [id, isMet] of Object.entries(requirements)) {
+        const element = document.getElementById(id);
+        const indicator = element.querySelector('.indicator');
+        
+        if (password.length === 0) {
+          // Default state when no password
+          element.classList.remove('met', 'not-met');
+          indicator.textContent = '○';
+        } else if (isMet) {
+          // Requirement met
+          element.classList.remove('not-met');
+          element.classList.add('met');
+          indicator.textContent = '✓';
+        } else {
+          // Requirement not met
+          element.classList.remove('met');
+          element.classList.add('not-met');
+          indicator.textContent = '✗';
+        }
+      }
+      
+      // Check if all requirements are met
+      const allMet = Object.values(requirements).every(req => req);
+      const passwordInput = document.getElementById('password');
+      
+      if (password.length > 0) {
+        if (allMet) {
+          passwordInput.style.borderColor = '#10b981';
+          passwordInput.style.boxShadow = '0 0 0 2px rgba(16, 185, 129, 0.2)';
+        } else {
+          passwordInput.style.borderColor = '#ef4444';
+          passwordInput.style.boxShadow = '0 0 0 2px rgba(239, 68, 68, 0.2)';
+        }
+      } else {
+        passwordInput.style.borderColor = '';
+        passwordInput.style.boxShadow = '';
+      }
+    }
+    
+    // Auto-hide flash messages after 5 seconds
+    document.addEventListener('DOMContentLoaded', () => {
+      const flashes = document.querySelectorAll('.flash');
+      flashes.forEach(flash => {
+        setTimeout(() => {
+          flash.style.transition = 'opacity 0.5s';
+          flash.style.opacity = '0';
+          setTimeout(() => flash.remove(), 500);
+        }, 5000);
+      });
+    });
+  </script>
+</body>
+</html>

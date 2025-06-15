@@ -1,0 +1,50 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run tests
+      run: |
+        python test_lockbox.py
+    
+    - name: Test Flask app startup
+      run: |
+        # Start the app in background
+        python app.py &
+        APP_PID=$!
+        
+        # Wait for app to start
+        sleep 5
+        
+        # Check if app is responding (Linux/Mac)
+        if [[ "${{ matrix.os }}" != "windows-latest" ]]; then
+          curl -f http://localhost:5001 || exit 1
+        fi
+        
+        # Kill the app
+        kill $APP_PID || true
+      shell: bash
