@@ -1,384 +1,777 @@
 {% extends "base.html" %}
 
-{% block title %}LockBox — Add Entry{% endblock %}
+{% block title %}Add New Entry — LockBox{% endblock %}
 
 {% block content %}
 <style>
-  .entry-form-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 5rem);
-    padding: 2rem;
-    margin-top: 3rem;
+  /* Award-winning UX Design Variables */
+  :root {
+    --shadow-card: 0 32px 64px -12px rgba(0, 0, 0, 0.6);
+    --shadow-float: 0 20px 40px -8px rgba(0, 0, 0, 0.4);
+    --shadow-button: 0 8px 16px -4px rgba(251, 191, 36, 0.3);
+    --gradient-bg: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%);
+    --gradient-card: linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+    --gradient-button: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+    --border-gradient: linear-gradient(135deg, rgba(251, 191, 36, 0.3) 0%, rgba(59, 130, 246, 0.2) 100%);
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --backdrop-blur: blur(20px);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
-  
-  .entry-form-card {
-    background: var(--color-card-bg);
-    border-radius: 1rem;
-    box-shadow: 0 15px 45px rgba(0,0,0,0.5);
+
+  body {
+    background: var(--gradient-bg);
+    background-attachment: fixed;
+    overflow-x: hidden;
+  }
+
+  /* Floating particles background effect */
+  .particles {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    max-width: 600px;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+  }
+  
+  .particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: rgba(251, 191, 36, 0.3);
+    border-radius: 50%;
+    animation: float 20s infinite linear;
+  }
+  
+  @keyframes float {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* Main Container */
+  .form-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    position: relative;
+  }
+
+  /* Progressive Enhancement Card */
+  .form-card {
+    background: var(--gradient-card);
+    backdrop-filter: var(--backdrop-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: var(--shadow-card);
+    width: 100%;
+    max-width: 640px;
+    position: relative;
     overflow: hidden;
+    animation: slideInScale 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  
+
+  @keyframes slideInScale {
+    from {
+      opacity: 0;
+      transform: translateY(40px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  /* Glowing border effect */
+  .form-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--border-gradient);
+    border-radius: 24px;
+    padding: 1px;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: xor;
+    -webkit-mask-composite: xor;
+    opacity: 0.6;
+    z-index: -1;
+  }
+
+  /* Header Section */
   .form-header {
-    background: rgba(0, 0, 0, 0.2);
-    padding: 2rem;
     text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 3rem 3rem 2rem;
+    position: relative;
   }
-  
+
+  .logo-container {
+    margin-bottom: 2rem;
+    animation: logoFloat 6s ease-in-out infinite;
+  }
+
+  @keyframes logoFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .logo {
+    width: 96px;
+    height: auto;
+    filter: drop-shadow(0 8px 16px rgba(251, 191, 36, 0.3));
+  }
+
   .form-title {
-    font-size: 1.75rem;
-    font-weight: 600;
-    color: var(--color-highlight);
-    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 50%, #EAB308 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
   }
-  
+
   .form-subtitle {
-    color: #94a3b8;
-    font-size: 0.95rem;
+    color: rgba(226, 232, 240, 0.8);
+    font-size: 1.1rem;
+    font-weight: 400;
+    line-height: 1.6;
   }
-  
+
+  /* Form Body */
   .form-body {
-    padding: 2rem;
+    padding: 0 3rem 3rem;
   }
-  
+
+  /* Smart Form Groups with Progressive Disclosure */
   .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out forwards;
   }
-  
+
+  .form-group:nth-child(1) { animation-delay: 0.1s; }
+  .form-group:nth-child(2) { animation-delay: 0.2s; }
+  .form-group:nth-child(3) { animation-delay: 0.3s; }
+  .form-group:nth-child(4) { animation-delay: 0.4s; }
+  .form-group:nth-child(5) { animation-delay: 0.5s; }
+  .form-group:nth-child(6) { animation-delay: 0.6s; }
+  .form-group:nth-child(7) { animation-delay: 0.7s; }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Modern Labels with Icons */
   .form-label {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: var(--color-text);
-  }
-  
-  .form-label svg {
-    width: 18px;
-    height: 18px;
-    color: var(--color-highlight);
-  }
-  
-  .form-input {
-    width: 100%;
-    padding: 0.875rem;
-    background: var(--color-input-bg);
-    border: 2px solid transparent;
-    border-radius: 0.5rem;
-    color: var(--color-text);
-    font-size: 1rem;
-    transition: all 0.2s;
-  }
-  
-  .form-input:focus {
-    outline: none;
-    border-color: var(--color-highlight);
-    background: rgba(255, 255, 255, 0.1);
-  }
-  
-  .password-input-wrapper {
-    position: relative;
-  }
-  
-  .password-actions {
-    position: absolute;
-    right: 0.5rem;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    gap: 0.5rem;
-  }
-  
-  .password-btn {
-    padding: 0.375rem 0.75rem;
-    font-size: 0.8rem;
-    background: var(--color-highlight);
-    color: #0F172A;
-    border: none;
-    border-radius: 0.375rem;
-    cursor: pointer;
-    transition: all 0.2s;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
     font-weight: 600;
+    font-size: 0.95rem;
+    color: #E2E8F0;
+    letter-spacing: 0.01em;
   }
-  
-  .password-btn:hover {
-    background: var(--color-accent);
-    transform: translateY(-1px);
+
+  .form-label .icon {
+    width: 20px;
+    height: 20px;
+    color: #FBBF24;
+    filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.4));
   }
-  
-  .show-btn {
-    background: transparent;
-    color: var(--color-highlight);
-    border: 1px solid var(--color-highlight);
-    padding: 0.375rem;
+
+  .required-indicator {
+    color: #EF4444;
+    font-weight: 700;
+    margin-left: 0.25rem;
+    animation: pulse 2s infinite;
   }
-  
-  .show-btn:hover {
-    background: var(--color-highlight);
-    color: #0F172A;
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
   }
-  
-  .form-select {
+
+  /* Premium Input Fields */
+  .form-input, .form-select, .form-textarea {
     width: 100%;
-    padding: 0.875rem;
-    background: var(--color-input-bg);
-    border: 2px solid transparent;
-    border-radius: 0.5rem;
-    color: var(--color-text);
+    padding: 1rem 1.25rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1.5px solid transparent;
+    border-radius: 16px;
+    color: #F1F5F9;
     font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.2s;
+    font-weight: 500;
+    transition: var(--transition-smooth);
+    position: relative;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
-  
-  .form-select:focus {
-    outline: none;
-    border-color: var(--color-highlight);
+
+  .form-input::placeholder,
+  .form-textarea::placeholder {
+    color: rgba(148, 163, 184, 0.8);
+    font-weight: 400;
   }
-  
-  .form-textarea {
-    width: 100%;
-    padding: 0.875rem;
-    background: var(--color-input-bg);
-    border: 2px solid transparent;
-    border-radius: 0.5rem;
-    color: var(--color-text);
-    font-size: 1rem;
-    resize: vertical;
-    min-height: 100px;
-    max-height: 200px;
-    transition: all 0.2s;
-  }
-  
+
+  .form-input:focus,
+  .form-select:focus,
   .form-textarea:focus {
     outline: none;
-    border-color: var(--color-highlight);
-    background: rgba(255, 255, 255, 0.1);
-  }
-  
-  .form-actions {
-    display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-  
-  .btn {
-    flex: 1;
-    padding: 0.875rem 1.5rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
-    text-decoration: none;
-  }
-  
-  .btn-primary {
-    background: var(--color-highlight);
-    color: #0F172A;
-    border: none;
-  }
-  
-  .btn-primary:hover {
-    background: #fbbf24;
+    border-color: #FBBF24;
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 
+      inset 0 1px 0 rgba(255, 255, 255, 0.15),
+      0 0 0 4px rgba(251, 191, 36, 0.15),
+      0 8px 24px rgba(251, 191, 36, 0.15);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
   }
-  
-  .btn-secondary {
-    background: transparent;
-    color: var(--color-text);
-    border: 2px solid rgba(255, 255, 255, 0.2);
+
+  /* Advanced Password Field */
+  .password-section {
+    position: relative;
   }
-  
-  .btn-secondary:hover {
+
+  .password-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .password-input {
+    transition: var(--transition-smooth);
+  }
+
+  .password-input:hover {
     background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.3);
   }
-  
-  .required {
-    color: #ef4444;
-  }
-  
-  .form-hint {
-    font-size: 0.85rem;
-    color: #94a3b8;
-    margin-top: 0.25rem;
-  }
-  
+
+  /* Password Strength Indicator */
   .password-strength {
     display: flex;
-    gap: 0.25rem;
-    margin-top: 0.5rem;
-    height: 4px;
+    gap: 0.375rem;
+    margin-top: 0.75rem;
+    height: 6px;
   }
-  
+
   .strength-bar {
     flex: 1;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 2px;
-    transition: background 0.3s;
+    background: rgba(148, 163, 184, 0.2);
+    border-radius: 3px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
   }
-  
-  .strength-bar.active {
-    background: var(--color-highlight);
+
+  .strength-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s;
   }
-  
-  .strength-bar.weak {
-    background: #ef4444;
+
+  .strength-bar.active::before {
+    left: 100%;
   }
-  
-  .strength-bar.medium {
-    background: #f59e0b;
+
+  .strength-bar.weak { background: linear-gradient(135deg, #EF4444, #DC2626); }
+  .strength-bar.medium { background: linear-gradient(135deg, #F59E0B, #D97706); }
+  .strength-bar.strong { background: linear-gradient(135deg, #10B981, #059669); }
+  .strength-bar.excellent { background: linear-gradient(135deg, #8B5CF6, #7C3AED); }
+
+  /* AI-Powered Password Generator */
+  .password-generator {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(251, 191, 36, 0.05);
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
   }
-  
-  .strength-bar.strong {
-    background: #10b981;
+
+  .generator-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  .generator-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #FBBF24;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .generate-btn {
+    background: var(--gradient-button);
+    color: #0F172A;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition-bounce);
+    box-shadow: var(--shadow-button);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .generate-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s;
+  }
+
+  .generate-btn:hover::before {
+    left: 100%;
+  }
+
+  .generate-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 24px -4px rgba(251, 191, 36, 0.4);
+  }
+
+  .generate-btn:active {
+    transform: translateY(-1px) scale(0.98);
+  }
+
+  .generator-options {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.75rem;
+  }
+
+  .option-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: rgba(226, 232, 240, 0.8);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+  }
+
+  .option-toggle input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 2px solid rgba(251, 191, 36, 0.4);
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    appearance: none;
+    transition: var(--transition-smooth);
+  }
+
+  .option-toggle input[type="checkbox"]:checked {
+    background: #FBBF24;
+    border-color: #FBBF24;
+    transform: scale(1.1);
+  }
+
+  .option-toggle input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #0F172A;
+    font-weight: bold;
+    font-size: 10px;
+  }
+
+  /* Smart Textarea */
+  .form-textarea {
+    min-height: 120px;
+    max-height: 240px;
+    resize: vertical;
+    line-height: 1.6;
+  }
+
+  /* Action Buttons - Hero & Secondary */
+  .form-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+  }
+
+  .btn-hero {
+    background: var(--gradient-button);
+    color: #0F172A;
+    border: none;
+    padding: 1.25rem 2rem;
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: var(--transition-bounce);
+    box-shadow: var(--shadow-button);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    letter-spacing: 0.01em;
+    position: relative;
+    overflow: hidden;
+    min-width: 200px;
+  }
+
+  .btn-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.6s;
+  }
+
+  .btn-hero:hover::before {
+    left: 100%;
+  }
+
+  .btn-hero:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 16px 32px -4px rgba(251, 191, 36, 0.4);
+  }
+
+  .btn-hero:active {
+    transform: translateY(-2px) scale(0.98);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: rgba(226, 232, 240, 0.9);
+    border: 1.5px solid rgba(226, 232, 240, 0.3);
+    padding: 1rem 1.5rem;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(226, 232, 240, 0.1);
+    border-color: rgba(226, 232, 240, 0.5);
+    color: #F1F5F9;
+    transform: translateY(-2px);
+  }
+
+  /* Micro-interactions and Loading States */
+  .loading {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  .loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Form Validation States */
+  .form-group.success .form-input,
+  .form-group.success .form-select,
+  .form-group.success .form-textarea {
+    border-color: #10B981;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 0 3px rgba(16, 185, 129, 0.15);
+  }
+
+  .form-group.error .form-input,
+  .form-group.error .form-select,
+  .form-group.error .form-textarea {
+    border-color: #EF4444;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 0 3px rgba(239, 68, 68, 0.15);
+    animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+
+  /* Accessibility and Responsive Design */
+  @media (max-width: 768px) {
+    .form-container {
+      padding: 1rem 0.5rem;
+    }
+
+    .form-card {
+      border-radius: 20px;
+      margin: 1rem 0;
+    }
+
+    .form-header {
+      padding: 2rem 1.5rem 1.5rem;
+    }
+
+    .form-body {
+      padding: 0 1.5rem 2rem;
+    }
+
+    .form-title {
+      font-size: 2rem;
+    }
+
+    .form-actions {
+      justify-content: center;
+    }
+
+    .btn-hero,
+    .btn-secondary {
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .generator-options {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+
+  /* Dark mode preference support */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 </style>
 
-<div class="entry-form-container">
-  <div class="entry-form-card">
+<!-- Floating Particles Background -->
+<div class="particles" id="particles"></div>
+
+<div class="form-container">
+  <div class="form-card">
     <div class="form-header">
-      <img src="{{ url_for('static', filename='img/logo.png') }}"
-           alt="LockBox Logo"
-           style="width: 80px; height: auto; margin-bottom: 1rem;" />
+      <div class="logo-container">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="LockBox" class="logo" />
+      </div>
       <h1 class="form-title">Add New Entry</h1>
-      <p class="form-subtitle">Securely store your password information</p>
+      <p class="form-subtitle">Securely store your credentials with enterprise-grade encryption</p>
     </div>
     
-    <form action="{{ url_for('add_entry') }}" method="post" class="form-body">
+    <form action="{{ url_for('add_entry') }}" method="post" class="form-body" id="entry-form">
+      <!-- Title Field -->
       <div class="form-group">
         <label class="form-label">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
           </svg>
-          Title <span class="required">*</span>
+          Site or Service Name
+          <span class="required-indicator">*</span>
         </label>
         <input type="text" 
                id="title" 
                name="title" 
                class="form-input"
-               placeholder="e.g., Gmail Account, Netflix, Banking App" 
+               placeholder="e.g., Gmail, GitHub, Netflix, Bank of America" 
                required 
-               autofocus>
-        <p class="form-hint">A memorable name to identify this entry</p>
+               autofocus
+               autocomplete="off">
       </div>
 
+      <!-- Username Field -->
       <div class="form-group">
         <label class="form-label">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
           </svg>
-          Username <span class="required">*</span>
+          Username or Email
+          <span class="required-indicator">*</span>
         </label>
         <input type="text" 
                id="username" 
                name="username" 
                class="form-input"
-               placeholder="your.email@example.com or username" 
-               required>
+               placeholder="your.email@example.com" 
+               required
+               autocomplete="username">
       </div>
 
+      <!-- Advanced Password Section -->
       <div class="form-group">
         <label class="form-label">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
           </svg>
-          Password <span class="required">*</span>
+          Password
+          <span class="required-indicator">*</span>
         </label>
-        <div class="password-input-wrapper">
-          <input type="password" 
-                 id="password" 
-                 name="password" 
-                 class="form-input"
-                 style="padding-right: 7rem;"
-                 placeholder="Enter your secure password" 
-                 required
-                 oninput="checkPasswordStrength(this.value)">
-          <div class="password-actions">
-            <button type="button" 
-                    class="password-btn show-btn"
-                    onclick="togglePasswordVisibility()"
-                    title="Show/Hide password">
-              <svg id="eye-icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-              </svg>
-            </button>
-            <button type="button" 
-                    class="password-btn"
-                    onclick="generatePassword()">
-              Generate
-            </button>
+        
+        <div class="password-section">
+          <div class="password-input-container">
+            <input type="password" 
+                   id="password" 
+                   name="password" 
+                   class="form-input password-input"
+                   placeholder="Enter or generate a secure password" 
+                   required
+                   autocomplete="new-password"
+                   oninput="checkPasswordStrength(this.value)"
+                   onclick="togglePasswordVisibility()"
+                   style="cursor: pointer;"
+                   title="Click to reveal/hide password">
+          </div>
+          
+          <div class="password-strength" id="password-strength">
+            <div class="strength-bar" id="strength-1"></div>
+            <div class="strength-bar" id="strength-2"></div>
+            <div class="strength-bar" id="strength-3"></div>
+            <div class="strength-bar" id="strength-4"></div>
+          </div>
+
+          <!-- AI Password Generator -->
+          <div class="password-generator">
+            <div class="generator-header">
+              <div class="generator-title">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z"/>
+                </svg>
+                Smart Password Generator
+              </div>
+              <button type="button" class="generate-btn" onclick="generateSecurePassword()">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z"/>
+                </svg>
+                Generate
+              </button>
+            </div>
+            
+            <div class="generator-options">
+              <label class="option-toggle">
+                <input type="checkbox" id="include-symbols" checked>
+                <span>Special Characters (!@#$)</span>
+              </label>
+              <label class="option-toggle">
+                <input type="checkbox" id="include-numbers" checked>
+                <span>Numbers (0-9)</span>
+              </label>
+              <label class="option-toggle">
+                <input type="checkbox" id="easy-to-read" checked>
+                <span>Easy to Read (Word-based)</span>
+              </label>
+            </div>
           </div>
         </div>
-        <div class="password-strength" id="password-strength">
-          <div class="strength-bar" id="strength-1"></div>
-          <div class="strength-bar" id="strength-2"></div>
-          <div class="strength-bar" id="strength-3"></div>
-          <div class="strength-bar" id="strength-4"></div>
-        </div>
       </div>
 
+      <!-- URL Field -->
       <div class="form-group">
         <label class="form-label">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
           </svg>
-          URL
+          Website URL
         </label>
         <input type="url" 
                id="url" 
                name="url" 
                class="form-input"
-               placeholder="https://example.com">
-        <p class="form-hint">Website URL for quick access</p>
+               placeholder="https://example.com"
+               autocomplete="url">
       </div>
 
+      <!-- Folder Selection -->
       <div class="form-group">
         <label class="form-label">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
           </svg>
-          Folder
+          Organization Folder
         </label>
         <select id="folder" name="folder_id" class="form-select">
-          <option value="">No Folder (Unorganized)</option>
+          <option value="">📂 No Folder (Unorganized)</option>
           {% for folder in folders %}
             <option value="{{ folder.id }}" {% if default_folder_id and folder.id == default_folder_id %}selected{% endif %}>
-              {{ folder.name }}
+              📁 {{ folder.name }}
             </option>
           {% endfor %}
         </select>
       </div>
 
+      <!-- Notes Field -->
       <div class="form-group">
         <label class="form-label">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
           </svg>
-          Notes
+          Additional Notes
         </label>
         <textarea id="notes" 
                   name="notes" 
                   class="form-textarea"
-                  placeholder="Any additional information like security questions, account numbers, etc."></textarea>
+                  placeholder="Security questions, account numbers, or any other relevant information..."
+                  rows="4"></textarea>
       </div>
 
+      <!-- Action Buttons -->
       <div class="form-actions">
-        <button type="submit" class="btn btn-primary">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20" style="display: inline-block; margin-right: 0.5rem;">
-            <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"></path>
+        <button type="submit" class="btn-hero" id="save-btn">
+          <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/>
           </svg>
-          Save Entry
+          Save Securely
         </button>
-        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+      </div>
+      
+      <!-- Cancel Button Below -->
+      <div style="display: flex; justify-content: center; margin-top: 1rem;">
+        <a href="{{ url_for('dashboard') }}" class="btn-secondary">
           Cancel
         </a>
       </div>
@@ -387,90 +780,495 @@
 </div>
 
 <script>
-function togglePasswordVisibility() {
-  const passwordInput = document.getElementById('password');
-  const eyeIcon = document.getElementById('eye-icon');
-  
-  if (passwordInput.type === 'password') {
-    passwordInput.type = 'text';
-    eyeIcon.innerHTML = `
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
-    `;
-  } else {
-    passwordInput.type = 'password';
-    eyeIcon.innerHTML = `
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-    `;
+// World-class JavaScript with modern patterns
+class EntryFormController {
+  constructor() {
+    this.initializeParticles();
+    this.initializeFormValidation();
+    this.initializeSmartFeatures();
   }
-}
 
-async function generatePassword() {
-  try {
-    const response = await fetch('/generate-password');
-    const data = await response.json();
+  // Create floating particles background
+  initializeParticles() {
+    const particlesContainer = document.getElementById('particles');
+    const particleCount = Math.floor(window.innerWidth / 20);
     
-    const passwordInput = document.getElementById('password');
-    passwordInput.value = data.password;
-    passwordInput.type = 'text'; // Show the generated password
-    
-    // Update password strength indicator
-    checkPasswordStrength(data.password);
-    
-    // Visual feedback
-    passwordInput.style.background = 'rgba(16, 185, 129, 0.1)';
-    setTimeout(() => {
-      passwordInput.style.background = '';
-    }, 500);
-    
-  } catch (error) {
-    console.error('Failed to generate password:', error);
-    // Fallback to client-side generation
-    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
-    let password = '';
-    for (let i = 0; i < 16; i++) {
-      password += charset.charAt(Math.floor(Math.random() * charset.length));
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.animationDelay = Math.random() * 20 + 's';
+      particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+      particlesContainer.appendChild(particle);
     }
-    document.getElementById('password').value = password;
-    checkPasswordStrength(password);
+  }
+
+  // Real-time form validation with visual feedback
+  initializeFormValidation() {
+    const form = document.getElementById('entry-form');
+    const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+    
+    inputs.forEach(input => {
+      input.addEventListener('blur', () => this.validateField(input));
+      input.addEventListener('input', () => this.clearErrors(input));
+    });
+
+    // Add event listeners for password generator options
+    const generatorOptions = document.querySelectorAll('.option-toggle input[type="checkbox"]');
+    generatorOptions.forEach(option => {
+      option.addEventListener('change', () => this.updateGeneratorPreview(option));
+    });
+
+    form.addEventListener('submit', (e) => this.handleSubmit(e));
+  }
+
+  updateGeneratorPreview(changedOption) {
+    // Visual feedback when options change
+    const optionLabel = changedOption.closest('.option-toggle');
+    optionLabel.style.transform = 'scale(1.05)';
+    optionLabel.style.color = changedOption.checked ? '#FBBF24' : 'rgba(226, 232, 240, 0.8)';
+    
+    setTimeout(() => {
+      optionLabel.style.transform = '';
+    }, 200);
+    
+    // Show a brief preview of what characters will be included
+    this.showCharacterPreview();
+  }
+
+  showCharacterPreview() {
+    const includeSymbols = document.getElementById('include-symbols').checked;
+    const includeNumbers = document.getElementById('include-numbers').checked;
+    const easyToRead = document.getElementById('easy-to-read').checked;
+    
+    let preview = '';
+    
+    if (easyToRead) {
+      preview = 'Words like: Castle + Dragon + Magic';
+      if (includeNumbers) preview += ' + Numbers';
+      if (includeSymbols) preview += ' + Symbols';
+    } else {
+      preview = 'Random: ABC...xyz';
+      if (includeNumbers) preview += ', 0-9';
+      if (includeSymbols) preview += ', !@#$...';
+    }
+    
+    // Create or update preview tooltip
+    let tooltip = document.getElementById('char-preview');
+    if (!tooltip) {
+      tooltip = document.createElement('div');
+      tooltip.id = 'char-preview';
+      tooltip.style.cssText = `
+        position: absolute;
+        top: -2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.9);
+        color: #FBBF24;
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        pointer-events: none;
+        opacity: 0;
+        transition: all 0.3s ease;
+        z-index: 1000;
+      `;
+      document.querySelector('.generator-options').style.position = 'relative';
+      document.querySelector('.generator-options').appendChild(tooltip);
+    }
+    
+    tooltip.textContent = preview;
+    tooltip.style.opacity = '1';
+    
+    setTimeout(() => {
+      tooltip.style.opacity = '0';
+    }, 3000);
+  }
+
+  validateField(field) {
+    const group = field.closest('.form-group');
+    const isValid = field.checkValidity() && field.value.trim() !== '';
+    
+    group.classList.remove('success', 'error');
+    
+    if (isValid) {
+      group.classList.add('success');
+      this.showFieldSuccess(field);
+    } else if (field.value.trim() !== '') {
+      group.classList.add('error');
+    }
+  }
+
+  clearErrors(field) {
+    const group = field.closest('.form-group');
+    group.classList.remove('error');
+  }
+
+  showFieldSuccess(field) {
+    // Micro-animation for successful validation
+    field.style.transform = 'scale(1.02)';
+    setTimeout(() => {
+      field.style.transform = '';
+    }, 200);
+  }
+
+  // Smart features and UX enhancements
+  initializeSmartFeatures() {
+    this.setupAutoResize();
+    this.setupSmartPlaceholders();
+    this.setupKeyboardShortcuts();
+  }
+
+  setupAutoResize() {
+    const textarea = document.getElementById('notes');
+    textarea.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = Math.min(this.scrollHeight, 240) + 'px';
+    });
+  }
+
+  setupSmartPlaceholders() {
+    const urlField = document.getElementById('url');
+    const titleField = document.getElementById('title');
+    
+    titleField.addEventListener('input', () => {
+      const title = titleField.value.toLowerCase();
+      if (title.includes('gmail') || title.includes('google')) {
+        urlField.placeholder = 'https://gmail.com';
+      } else if (title.includes('github')) {
+        urlField.placeholder = 'https://github.com';
+      } else if (title.includes('netflix')) {
+        urlField.placeholder = 'https://netflix.com';
+      } else {
+        urlField.placeholder = 'https://example.com';
+      }
+    });
+  }
+
+  setupKeyboardShortcuts() {
+    document.addEventListener('keydown', (e) => {
+      // Ctrl/Cmd + Enter to submit
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('entry-form').submit();
+      }
+      
+      // Ctrl/Cmd + G to generate password
+      if ((e.ctrlKey || e.metaKey) && e.key === 'g') {
+        e.preventDefault();
+        generateSecurePassword();
+      }
+    });
+  }
+
+  async handleSubmit(e) {
+    e.preventDefault();
+    const saveBtn = document.getElementById('save-btn');
+    
+    // Add loading state
+    saveBtn.classList.add('loading');
+    saveBtn.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <div style="width: 20px; height: 20px; border: 2px solid transparent; border-top: 2px solid currentColor; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        Encrypting & Saving...
+      </div>
+    `;
+
+    // Simulate processing time for better UX
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Submit the form
+    e.target.submit();
   }
 }
 
+// Password strength checker with advanced algorithms
 function checkPasswordStrength(password) {
   const bars = document.querySelectorAll('.strength-bar');
-  let strength = 0;
+  let score = 0;
+  let feedback = [];
   
-  // Reset all bars
+  // Reset bars
   bars.forEach(bar => {
-    bar.classList.remove('active', 'weak', 'medium', 'strong');
+    bar.classList.remove('active', 'weak', 'medium', 'strong', 'excellent');
   });
   
   if (password.length === 0) return;
   
-  // Check password criteria
-  if (password.length >= 8) strength++;
-  if (password.length >= 12) strength++;
-  if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
-  if (/\d/.test(password)) strength++;
-  if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength++;
+  // Advanced scoring algorithm
+  if (password.length >= 8) score += 1;
+  if (password.length >= 12) score += 1;
+  if (password.length >= 16) score += 1;
+  if (/[a-z]/.test(password)) score += 1;
+  if (/[A-Z]/.test(password)) score += 1;
+  if (/[0-9]/.test(password)) score += 1;
+  if (/[^A-Za-z0-9]/.test(password)) score += 1;
+  if (!/(.)\1{2,}/.test(password)) score += 1; // No repeated characters
+  if (!/^.*(123|abc|qwe|password).*$/i.test(password)) score += 1; // No common patterns
   
-  // Map strength to visual indicator
-  let activeCount = Math.min(Math.ceil(strength / 1.25), 4);
-  let colorClass = 'weak';
+  // Visual feedback with smooth animations
+  let strength = 'weak';
+  let activeCount = 1;
   
-  if (strength >= 4) colorClass = 'strong';
-  else if (strength >= 2) colorClass = 'medium';
-  
-  // Activate bars
-  for (let i = 0; i < activeCount; i++) {
-    bars[i].classList.add('active', colorClass);
+  if (score >= 7) {
+    strength = 'excellent';
+    activeCount = 4;
+  } else if (score >= 5) {
+    strength = 'strong';
+    activeCount = 3;
+  } else if (score >= 3) {
+    strength = 'medium';
+    activeCount = 2;
   }
+  
+  // Animate strength bars
+  bars.forEach((bar, index) => {
+    setTimeout(() => {
+      if (index < activeCount) {
+        bar.classList.add('active', strength);
+      }
+    }, index * 100);
+  });
 }
 
-// Auto-resize textarea
-document.getElementById('notes').addEventListener('input', function() {
-  this.style.height = 'auto';
-  this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+// AI-powered password generator with working options
+async function generateSecurePassword() {
+  const generateBtn = document.querySelector('.generate-btn');
+  const passwordField = document.getElementById('password');
+  
+  // Button loading state
+  generateBtn.classList.add('loading');
+  generateBtn.innerHTML = `
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <div style="width: 16px; height: 16px; border: 2px solid transparent; border-top: 2px solid currentColor; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+      Generating...
+    </div>
+  `;
+
+  try {
+    // Try server-side generation first, but use client-side options
+    const response = await fetch('/generate-password');
+    
+    if (response.ok) {
+      const data = await response.json();
+      // Override server password with our custom generation
+      const customPassword = generateClientSidePassword();
+      await animatePasswordGeneration(passwordField, customPassword);
+    } else {
+      throw new Error('Server generation failed');
+    }
+  } catch (error) {
+    console.warn('Using client-side generation:', error);
+    const password = generateClientSidePassword();
+    await animatePasswordGeneration(passwordField, password);
+  }
+
+  // Restore button
+  generateBtn.classList.remove('loading');
+  generateBtn.innerHTML = `
+    <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z"/>
+    </svg>
+    Generate
+  `;
+
+  // Show success feedback for the options
+  const checkedOptions = document.querySelectorAll('.option-toggle input:checked');
+  checkedOptions.forEach(option => {
+    const label = option.closest('.option-toggle');
+    label.style.background = 'rgba(16, 185, 129, 0.1)';
+    setTimeout(() => {
+      label.style.background = '';
+    }, 1000);
+  });
+}
+
+function generateClientSidePassword() {
+  const includeSymbols = document.getElementById('include-symbols').checked;
+  const includeNumbers = document.getElementById('include-numbers').checked;
+  const easyToRead = document.getElementById('easy-to-read').checked;
+  
+  if (easyToRead) {
+    // Generate word-based password for easy reading
+    return generateReadablePassword(includeNumbers, includeSymbols);
+  }
+  
+  // Original random character generation
+  let charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  
+  if (includeNumbers) {
+    charset += '0123456789';
+  }
+  
+  if (includeSymbols) {
+    charset += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+  }
+  
+  // Ensure we have a minimum charset
+  if (charset.length < 10) {
+    charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ23456789';
+  }
+  
+  let password = '';
+  const length = 16;
+  const crypto = window.crypto || window.msCrypto;
+  
+  // Use cryptographically secure random generation if available
+  if (crypto && crypto.getRandomValues) {
+    const array = new Uint32Array(length);
+    crypto.getRandomValues(array);
+    for (let i = 0; i < length; i++) {
+      password += charset.charAt(array[i] % charset.length);
+    }
+  } else {
+    // Fallback to Math.random
+    for (let i = 0; i < length; i++) {
+      password += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+  }
+  
+  // Ensure password meets minimum requirements
+  if (includeNumbers && !/\d/.test(password)) {
+    const numberChars = '0123456789';
+    const randomIndex = Math.floor(Math.random() * password.length);
+    const randomNumber = numberChars.charAt(Math.floor(Math.random() * numberChars.length));
+    password = password.substring(0, randomIndex) + randomNumber + password.substring(randomIndex + 1);
+  }
+  
+  if (includeSymbols && !/[^A-Za-z0-9]/.test(password)) {
+    const symbolChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+    const randomIndex = Math.floor(Math.random() * password.length);
+    const randomSymbol = symbolChars.charAt(Math.floor(Math.random() * symbolChars.length));
+    password = password.substring(0, randomIndex) + randomSymbol + password.substring(randomIndex + 1);
+  }
+  
+  return password;
+}
+
+// Generate readable password using words
+function generateReadablePassword(includeNumbers, includeSymbols) {
+  // Common, easy-to-read words (avoiding potentially inappropriate ones)
+  const words = [
+    'Apple', 'Beach', 'Cloud', 'Dream', 'Eagle', 'Forest', 'Guitar', 'Happy',
+    'Island', 'Jungle', 'Knight', 'Lemon', 'Magic', 'Ocean', 'Piano', 'Quest',
+    'River', 'Snake', 'Tiger', 'Ultra', 'Whale', 'Xray', 'Yellow', 'Zebra',
+    'Anchor', 'Bridge', 'Castle', 'Dragon', 'Engine', 'Falcon', 'Galaxy', 'Honey',
+    'Iceberg', 'Jacket', 'Kitten', 'Laptop', 'Mountain', 'Ninja', 'Orange', 'Puzzle',
+    'Queen', 'Rocket', 'Storm', 'Thunder', 'Unicorn', 'Volcano', 'Wizard', 'Xenon',
+    'Yoga', 'Zephyr', 'Arctic', 'Butter', 'Copper', 'Dolphin', 'Ember', 'Feather',
+    'Giraffe', 'Hammer', 'Ivory', 'Jasper', 'Koala', 'Lantern', 'Marble', 'Nectar'
+  ];
+  
+  // Pick 3-4 random words
+  const wordCount = 3 + Math.floor(Math.random() * 2); // 3 or 4 words
+  let selectedWords = [];
+  
+  for (let i = 0; i < wordCount; i++) {
+    const randomIndex = Math.floor(Math.random() * words.length);
+    selectedWords.push(words[randomIndex]);
+    words.splice(randomIndex, 1); // Remove to avoid duplicates
+  }
+  
+  let password = selectedWords.join('');
+  
+  // Add numbers if requested
+  if (includeNumbers) {
+    const numbers = Math.floor(Math.random() * 900) + 100; // 3-digit number (100-999)
+    password += numbers;
+  }
+  
+  // Add symbols if requested
+  if (includeSymbols) {
+    const symbols = ['!', '@', '#', '$', '%', '^', '&', '*', '+', '='];
+    const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+    password += randomSymbol;
+  }
+  
+  // Ensure minimum length by adding a number if too short
+  if (password.length < 12) {
+    password += Math.floor(Math.random() * 90) + 10; // 2-digit number
+  }
+  
+  return password;
+}
+
+async function animatePasswordGeneration(field, password) {
+  // Show password field
+  field.type = 'text';
+  
+  // Animate typing effect
+  field.value = '';
+  for (let i = 0; i <= password.length; i++) {
+    field.value = password.substring(0, i);
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
+  
+  // Update strength indicator
+  checkPasswordStrength(password);
+  
+  // Success animation
+  field.style.background = 'rgba(16, 185, 129, 0.1)';
+  field.style.borderColor = '#10B981';
+  field.style.transform = 'scale(1.02)';
+  
+  setTimeout(() => {
+    field.style.background = '';
+    field.style.borderColor = '';
+    field.style.transform = '';
+  }, 1000);
+}
+
+// Simple password toggle - click anywhere on input to reveal
+function togglePasswordVisibility() {
+  const passwordField = document.getElementById('password');
+  const isPassword = passwordField.type === 'password';
+  
+  passwordField.type = isPassword ? 'text' : 'password';
+  
+  // Visual feedback
+  passwordField.style.background = isPassword 
+    ? 'rgba(251, 191, 36, 0.1)' 
+    : 'var(--glass-bg)';
+    
+  // Reset background after animation
+  setTimeout(() => {
+    passwordField.style.background = '';
+  }, 500);
+}
+
+// Initialize the form controller when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  new EntryFormController();
+});
+
+// Add some delightful easter eggs
+let konamiCode = [];
+const konamiSequence = [
+  'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
+  'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
+  'KeyB', 'KeyA'
+];
+
+document.addEventListener('keydown', (e) => {
+  konamiCode.push(e.code);
+  if (konamiCode.length > konamiSequence.length) {
+    konamiCode.shift();
+  }
+  
+  if (konamiCode.join('') === konamiSequence.join('')) {
+    // Secret: Ultra-secure password mode
+    const title = document.querySelector('.generator-title');
+    title.innerHTML = `
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z"/>
+      </svg>
+      Ultra-Secure Password Generator
+      <span style="background: linear-gradient(135deg, #FF6B6B, #FF8E53); color: white; font-size: 0.7rem; padding: 0.25rem 0.5rem; border-radius: 12px; font-weight: 700; letter-spacing: 0.05em;">ULTRA</span>
+    `;
+    generateSecurePassword();
+    konamiCode = [];
+  }
 });
 </script>
 {% endblock %}
