@@ -1,0 +1,178 @@
+/* static/css/dashboard.css */
+
+/* —————————————————————————————————————————
+   Root & Global
+————————————————————————————————————————— */
+:root {
+  --color-bg-start: #0F172A;
+  --color-bg-end:   #1E293B;
+  --color-card-bg:  rgba(15, 23, 42, 0.85);
+  --color-accent:   #3B82F6;
+  --color-highlight:#FBBF24;
+  --color-text:     #E2E8F0;
+  --color-input-bg: rgba(255, 255, 255, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--color-text);
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.05) 0,
+      rgba(255,255,255,0.05) 2px,
+      transparent 2px,
+      transparent 8px
+    ),
+    linear-gradient(135deg, var(--color-bg-start), var(--color-bg-end));
+  overflow: hidden;  /* prevent outer scroll */
+}
+
+/* —————————————————————————————————————————
+   Top Nav (Dashboard & Logout)
+————————————————————————————————————————— */
+.top-nav {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  z-index: 100;
+}
+
+.top-nav a {
+  color: var(--color-text);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.top-nav form button {
+  background: var(--color-highlight);
+  color: #0F172A;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.top-nav form button:hover {
+  background: var(--color-accent);
+}
+
+/* —————————————————————————————————————————
+   Dashboard Wrapper & Card
+————————————————————————————————————————— */
+.dashboard-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 2rem;
+}
+
+.dashboard-card {
+  background: var(--color-card-bg);
+  padding: 2.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 15px 45px rgba(0,0,0,0.5);
+  width: 90%;
+  max-width: 1200px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* —————————————————————————————————————————
+   Logo & Header
+————————————————————————————————————————— */
+.logo {
+  display: block;
+  margin: 0 auto 1.5rem;
+  width: 120px;
+  height: auto;
+}
+
+.dashboard-header {
+  font-size: 2rem;
+  font-weight: 600;
+  border-bottom: 3px solid var(--color-highlight);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+/* —————————————————————————————————————————
+   Scrollable Entries List
+————————————————————————————————————————— */
+.scrollable-entries {
+  overflow-y: auto;
+  flex: 1;                       /* grow to fill card */
+  margin-bottom: 1rem;
+  padding-right: 0.5rem;
+  /* approx four rows: adjust row height if needed */
+  max-height: calc(4 * 3.5rem);
+}
+
+.entry-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.entry-table th,
+.entry-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(226,232,240,0.2);
+}
+
+.entry-table th {
+  background: rgba(255,255,255,0.1);
+  font-weight: 500;
+}
+
+.entry-table tr:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+/* —————————————————————————————————————————
+   Footer Actions
+————————————————————————————————————————— */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.actions a {
+  background: var(--color-highlight);
+  color: #0F172A;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.actions a:hover {
+  background: var(--color-accent);
+}
+
+/* Optional: custom scrollbar for Webkit */
+.scrollable-entries::-webkit-scrollbar {
+  width: 8px;
+}
+.scrollable-entries::-webkit-scrollbar-thumb {
+  background: rgba(226,232,240,0.3);
+  border-radius: 4px;
+}

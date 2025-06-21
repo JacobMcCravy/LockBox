@@ -1,0 +1,13 @@
+services:
+  lockbox:
+    build: .
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./data:/app/data
+      - ./static:/app/static
+      - ./templates:/app/templates
+    environment:
+      - DATABASE_PATH=/app/data/lockbox.db
+      - FLASK_ENV=production
+    restart: unless-stopped

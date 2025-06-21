@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}LockBox — Edit Entry{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+  <div class="dashboard-card">
+    <!-- Logo -->
+    <img src="{{ url_for('static', filename='img/logo.png') }}"
+         alt="LockBox Logo"
+         class="logo" />
+
+    <!-- Header -->
+    <div class="dashboard-header">Edit Entry</div>
+
+    <form action="{{ url_for('edit_entry', id=entry.id) }}" method="post">
+      <label for="title">Title <span style="color: #ef4444;">*</span></label>
+      <input type="text" id="title" name="title" value="{{ entry.title }}" required autofocus>
+
+      <label for="username">Username <span style="color: #ef4444;">*</span></label>
+      <input type="text" id="username" name="username" value="{{ entry.username }}" required>
+
+      <label for="password">Password <span style="color: #ef4444;">*</span></label>
+      <div style="position: relative;">
+        <input type="password" id="password" name="password" value="{{ entry.password }}" required>
+        <button type="button" 
+                onclick="generatePassword()" 
+                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); 
+                       padding: 0.25rem 0.5rem; font-size: 0.8rem; background: var(--color-highlight); 
+                       color: #0F172A; border: none; border-radius: 0.25rem; cursor: pointer;">
+          Generate
+        </button>
+      </div>
+      <div class="show-password" onclick="togglePasswordVisibility()" style="margin-top: 0.5rem;">
+        <input type="checkbox" id="show-password-checkbox" style="margin-right: 0.5rem;">
+        <label for="show-password-checkbox" style="margin: 0; cursor: pointer;">Show Password</label>
+      </div>
+
+      <label for="url">URL</label>
+      <input type="url" id="url" name="url" value="{{ entry.url }}">
+
+      <label for="folder">Folder</label>
+      <select id="folder" name="folder_id" 
+              style="width: 100%; padding: 0.75rem; margin-top: 0.5rem; border: none; 
+                     border-radius: 0.5rem; background: var(--color-input-bg); 
+                     color: var(--color-text); font-size: 1rem;">
+        <option value="">No Folder</option>
+        {% for folder in folders %}
+          <option value="{{ folder.id }}" 
+                  {% if entry.folder_id == folder.id %}selected{% endif %}
+                  style="background: var(--color-card-bg);">
+            {{ folder.name }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <label for="notes">Notes</label>
+      <textarea id="notes" name="notes" rows="3">{{ entry.notes }}</textarea>
+
+      <div class="actions" style="margin-top: 2rem;">
+        <button type="submit">Update Entry</button>
+        <a href="{{ url_for('dashboard') }}" 
+           style="background: transparent; color: var(--color-text); border: 2px solid var(--color-text);">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function togglePasswordVisibility() {
+  const passwordInput = document.getElementById('password');
+  const checkbox = document.getElementById('show-password-checkbox');
+  passwordInput.type = checkbox.checked ? 'text' : 'password';
+}
+
+async function generatePassword() {
+  try {
+    const response = await fetch('/generate-password');
+    const data = await response.json();
+    
+    const passwordInput = document.getElementById('password');
+    passwordInput.value = data.password;
+    
+    // Show the password temporarily
+    const checkbox = document.getElementById('show-password-checkbox');
+    checkbox.checked = true;
+    passwordInput.type = 'text';
+    
+    // Visual feedback
+    passwordInput.style.background = '#10b98120';
+    setTimeout(() => {
+      passwordInput.style.background = '';
+    }, 500);
+    
+  } catch (error) {
+    console.error('Failed to generate password:', error);
+    // Fallback to client-side generation
+    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+    let password = '';
+    for (let i = 0; i < 16; i++) {
+      password += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+    document.getElementById('password').value = password;
+  }
+}
+
+// Show password by default for editing
+document.addEventListener('DOMContentLoaded', () => {
+  const checkbox = document.getElementById('show-password-checkbox');
+  const passwordInput = document.getElementById('password');
+  checkbox.checked = true;
+  passwordInput.type = 'text';
+});
+</script>
+{% endblock %}

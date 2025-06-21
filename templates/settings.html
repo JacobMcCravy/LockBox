@@ -1,0 +1,445 @@
+{% extends "base.html" %}
+
+{% block title %}LockBox — Settings{% endblock %}
+
+{% block content %}
+<style>
+  .settings-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 5rem);
+    padding: 2rem;
+  }
+  
+  .settings-card {
+    background: var(--color-card-bg);
+    padding: 2.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 15px 45px rgba(0,0,0,0.5);
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .settings-section {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  
+  .settings-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+  
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--color-highlight);
+  }
+  
+  .current-info {
+    background: rgba(255,255,255,0.05);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .password-requirements {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    margin: 0.5rem 0 1rem 0;
+    font-size: 0.85rem;
+  }
+  
+  .requirement {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0;
+    color: #94a3b8;
+    transition: color 0.3s ease;
+  }
+  
+  .requirement .indicator {
+    font-size: 1rem;
+    transition: color 0.3s ease;
+  }
+  
+  .requirement.met {
+    color: #10b981;
+  }
+  
+  .requirement.met .indicator {
+    color: #10b981;
+  }
+  
+  .requirement.not-met {
+    color: #ef4444;
+  }
+  
+  .requirement.not-met .indicator {
+    color: #ef4444;
+  }
+  
+  .show-password {
+    display: flex;
+    align-items: center;
+    user-select: none;
+  }
+  
+  .show-password input[type="checkbox"] {
+    margin-right: 0.5rem;
+    cursor: pointer;
+  }
+  
+  .show-password label {
+    font-size: 0.85rem;
+    color: var(--color-highlight);
+  }
+  
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+</style>
+
+<div class="settings-container">
+  <div class="settings-card">
+    <img src="{{ url_for('static', filename='img/logo.png') }}"
+         alt="LockBox Logo"
+         class="logo" style="width: 120px; height: auto; display: block; margin: 0 auto 1.5rem;" />
+
+    <div class="dashboard-header">Account Settings</div>
+
+    <!-- Display Name Section -->
+    <div class="settings-section">
+      <h3 class="section-title">Display Name</h3>
+      <div class="current-info">
+        Current display name: <strong>{{ display_name }}</strong>
+      </div>
+      <form action="{{ url_for('settings') }}" method="post">
+        <input type="hidden" name="action" value="update_display_name">
+        
+        <label for="display_name">What would you like to be called?</label>
+        <input type="text" 
+               id="display_name" 
+               name="display_name" 
+               placeholder="Enter your preferred name" 
+               value="{{ display_name }}"
+               required>
+        
+        <div class="actions" style="margin-top: 1rem;">
+          <button type="submit">Update Display Name</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Change Password Section -->
+    <div class="settings-section">
+      <h3 class="section-title">Change Password</h3>
+      <form action="{{ url_for('settings') }}" method="post" id="password-form">
+        <input type="hidden" name="action" value="change_password">
+        
+        <label for="current_password">Current Password</label>
+        <input type="password" 
+               id="current_password" 
+               name="current_password" 
+               placeholder="Enter your current password"
+               required>
+        
+        <label for="new_password">New Password</label>
+        <input type="password" 
+               id="new_password" 
+               name="new_password" 
+               placeholder="Enter new password"
+               required
+               oninput="checkPasswordStrength()">
+        
+        <div class="password-requirements" id="password-requirements" style="display: none;">
+          <p style="font-size: 0.85rem; margin: 0.5rem 0; color: var(--color-text);">Password must contain:</p>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li id="req-length" class="requirement">
+              <span class="indicator">○</span> At least 8 characters
+            </li>
+            <li id="req-uppercase" class="requirement">
+              <span class="indicator">○</span> One uppercase letter
+            </li>
+            <li id="req-lowercase" class="requirement">
+              <span class="indicator">○</span> One lowercase letter
+            </li>
+            <li id="req-number" class="requirement">
+              <span class="indicator">○</span> One number
+            </li>
+            <li id="req-special" class="requirement">
+              <span class="indicator">○</span> One special character
+            </li>
+          </ul>
+        </div>
+        
+        <label for="confirm_password">Confirm New Password</label>
+        <input type="password" 
+               id="confirm_password" 
+               name="confirm_password" 
+               placeholder="Confirm new password"
+               required>
+        
+        <div class="show-password" style="margin-top: 0.5rem;">
+          <input type="checkbox" id="show-passwords" onchange="togglePasswords()">
+          <label for="show-passwords" style="cursor: pointer; margin: 0;">Show Passwords</label>
+        </div>
+        
+        <div class="actions" style="margin-top: 1rem;">
+          <button type="submit">Change Password</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Account Info Section -->
+    <div class="settings-section">
+      <h3 class="section-title">Account Information</h3>
+      <div class="current-info">
+        <p>Username: <strong>{{ username }}</strong></p>
+        <p style="margin-top: 0.5rem; color: #94a3b8; font-size: 0.85rem;">
+          Username cannot be changed for security reasons.
+        </p>
+      </div>
+    </div>
+
+    <!-- Delete Account Section -->
+    <div class="settings-section" style="border-top: 2px solid #ef4444; padding-top: 2rem;">
+      <h3 class="section-title" style="color: #ef4444;">Danger Zone</h3>
+      <p style="color: #94a3b8; margin-bottom: 1rem;">
+        Once you delete your account, there is no going back. All your data will be permanently removed.
+      </p>
+      <button type="button" 
+              onclick="showDeleteAccountDialog()" 
+              style="background: transparent; color: #ef4444; border: 2px solid #ef4444; padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.2s;"
+              onmouseover="this.style.background='#ef4444'; this.style.color='white';"
+              onmouseout="this.style.background='transparent'; this.style.color='#ef4444';">
+        Delete My Account
+      </button>
+    </div>
+
+    <div class="actions" style="margin-top: 2rem; justify-content: center;">
+      <a href="{{ url_for('dashboard') }}" 
+         style="background: transparent; color: var(--color-text); border: 2px solid var(--color-text);">
+        Back to Dashboard
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+function togglePasswords() {
+  const fields = ['current_password', 'new_password', 'confirm_password'];
+  const checkbox = document.getElementById('show-passwords');
+  
+  fields.forEach(id => {
+    const field = document.getElementById(id);
+    field.type = checkbox.checked ? 'text' : 'password';
+  });
+}
+
+function checkPasswordStrength() {
+  const password = document.getElementById('new_password').value;
+  const reqDiv = document.getElementById('password-requirements');
+  
+  if (password.length > 0) {
+    reqDiv.style.display = 'block';
+    
+    const requirements = {
+      'req-length': password.length >= 8,
+      'req-uppercase': /[A-Z]/.test(password),
+      'req-lowercase': /[a-z]/.test(password),
+      'req-number': /\d/.test(password),
+      'req-special': /[!@#$%^&*(),.?":{}|<>]/.test(password)
+    };
+    
+    for (const [id, isMet] of Object.entries(requirements)) {
+      const element = document.getElementById(id);
+      const indicator = element.querySelector('.indicator');
+      
+      if (isMet) {
+        element.classList.remove('not-met');
+        element.classList.add('met');
+        indicator.textContent = '✓';
+      } else {
+        element.classList.remove('met');
+        element.classList.add('not-met');
+        indicator.textContent = '✗';
+      }
+    }
+  } else {
+    reqDiv.style.display = 'none';
+  }
+}
+
+// Delete account functionality
+function showDeleteAccountDialog() {
+  const overlay = document.createElement('div');
+  overlay.className = 'custom-dialog-overlay';
+  overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;';
+  
+  overlay.innerHTML = `
+    <div class="custom-dialog" style="background: var(--color-card-bg); border-radius: 1rem; padding: 2rem; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); max-width: 450px; width: 90%;">
+      <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; color: #ef4444;">Delete Account</h3>
+      
+      <div style="background: rgba(239, 68, 68, 0.1); border: 2px solid #ef4444; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1.5rem;">
+        <p style="color: #ef4444; font-weight: 600; margin-bottom: 0.5rem;">⚠️ This action cannot be undone!</p>
+        <p style="color: #e2e8f0; font-size: 0.9rem;">All your passwords, folders, and account data will be permanently deleted.</p>
+      </div>
+      
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; margin-bottom: 0.5rem; color: #94a3b8;">Enter your password to confirm:</label>
+        <input type="password" 
+               id="delete-account-password" 
+               class="dialog-input" 
+               placeholder="Your password"
+               style="width: 100%; padding: 0.75rem; background: var(--color-input-bg); border: 2px solid transparent; border-radius: 0.5rem; color: var(--color-text);">
+      </div>
+      
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; margin-bottom: 0.5rem; color: #94a3b8;">Type <strong style="color: #ef4444;">DELETE MY ACCOUNT</strong> to confirm:</label>
+        <input type="text" 
+               id="delete-account-confirm" 
+               class="dialog-input" 
+               placeholder="DELETE MY ACCOUNT"
+               style="width: 100%; padding: 0.75rem; background: var(--color-input-bg); border: 2px solid transparent; border-radius: 0.5rem; color: var(--color-text);">
+      </div>
+      
+      <div class="dialog-buttons" style="display: flex; gap: 1rem; justify-content: flex-end;">
+        <button class="dialog-btn dialog-btn-secondary" 
+                onclick="closeDeleteDialog()"
+                style="padding: 0.5rem 1.5rem; border-radius: 0.5rem; background: transparent; color: var(--color-text); border: 2px solid var(--color-text); font-weight: 600; cursor: pointer;">
+          Cancel
+        </button>
+        <button class="dialog-btn" 
+                id="confirm-delete-btn"
+                onclick="confirmDeleteAccount()"
+                style="padding: 0.5rem 1.5rem; border-radius: 0.5rem; background: #ef4444; color: white; border: none; font-weight: 600; cursor: pointer;">
+          Delete My Account
+        </button>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(overlay);
+  
+  // Focus on password field
+  document.getElementById('delete-account-password').focus();
+  
+  // Close on overlay click
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      closeDeleteDialog();
+    }
+  });
+}
+
+function closeDeleteDialog() {
+  const overlay = document.querySelector('.custom-dialog-overlay');
+  if (overlay) {
+    overlay.remove();
+  }
+}
+
+function confirmDeleteAccount() {
+  const password = document.getElementById('delete-account-password').value;
+  const confirmText = document.getElementById('delete-account-confirm').value;
+  
+  if (!password) {
+    showAlert('Please enter your password', 'error');
+    return;
+  }
+  
+  if (confirmText !== 'DELETE MY ACCOUNT') {
+    showAlert('Please type the confirmation text exactly as shown', 'error');
+    return;
+  }
+  
+  // Disable the button to prevent double-clicks
+  const btn = document.getElementById('confirm-delete-btn');
+  btn.disabled = true;
+  btn.textContent = 'Deleting...';
+  
+  fetch('/delete-account', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      password: password,
+      confirm_text: confirmText
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      closeDeleteDialog();
+      showAlert(data.message, 'success');
+      
+      // Redirect to login after a short delay
+      setTimeout(() => {
+        window.location.href = data.redirect || '/login';
+      }, 2000);
+    } else {
+      showAlert(data.message || 'Failed to delete account', 'error');
+      btn.disabled = false;
+      btn.textContent = 'Delete My Account';
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    showAlert('An error occurred while deleting the account', 'error');
+    btn.disabled = false;
+    btn.textContent = 'Delete My Account';
+  });
+}
+
+function showAlert(message, type = 'info') {
+  const flash = document.createElement('div');
+  flash.className = `flash ${type}`;
+  flash.textContent = message;
+  flash.style.cssText = `
+    position: fixed;
+    top: 4rem;
+    right: 1rem;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: slideIn 0.3s ease-out;
+    z-index: 1100;
+  `;
+  
+  if (type === 'success') {
+    flash.style.background = '#10b981';
+    flash.style.color = 'white';
+  } else if (type === 'error') {
+    flash.style.background = '#ef4444';
+    flash.style.color = 'white';
+  }
+  
+  document.body.appendChild(flash);
+  
+  // Auto-hide after 5 seconds
+  setTimeout(() => {
+    flash.style.transition = 'opacity 0.5s';
+    flash.style.opacity = '0';
+    setTimeout(() => flash.remove(), 500);
+  }, 5000);
+}
+</script>
+{% endblock %}

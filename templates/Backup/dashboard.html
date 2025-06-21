@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>LockBox — Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}"/>
+</head>
+<body>
+  <!-- Top Nav -->
+  <nav class="top-nav">
+    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    <form action="{{ url_for('logout') }}" method="post">
+      <button type="submit">Logout</button>
+    </form>
+  </nav>
+
+  <div class="dashboard-container">
+    <div class="dashboard-card">
+      <!-- Logo -->
+      <img
+        src="{{ url_for('static', filename='img/logo.png') }}"
+        alt="LockBox Logo"
+        class="logo"
+      />
+
+      <!-- Header -->
+      <div class="dashboard-header">Dashboard</div>
+
+      <!-- Scrollable Entries -->
+      <div class="scrollable-entries">
+        {% if entries %}
+          <table class="entry-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Username</th>
+                <th>Password</th>
+                <th>URL</th>
+                <th>Notes</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for e in entries %}
+              <tr>
+                <td>{{ e.title }}</td>
+                <td>{{ e.username }}</td>
+                <td><code>{{ e.password }}</code></td>
+                <td>
+                  {% if e.url %}
+                    <a href="{{ e.url }}" target="_blank">{{ e.url }}</a>
+                  {% endif %}
+                </td>
+                <td>{{ e.notes or '' }}</td>
+                <td>
+                  <a href="{{ url_for('edit_entry', id=e.id) }}">Edit</a>
+                  |
+                  <form
+                    action="{{ url_for('delete_entry', id=e.id) }}"
+                    method="post"
+                    style="display:inline-flex;align-items:center;margin:0;"
+                  >
+                    <button type="submit">Delete</button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p style="text-align:center; padding:1rem;">
+            No entries yet.
+            <a href="{{ url_for('add_entry') }}"
+               style="color:var(--color-highlight);">+ Add one →</a>
+          </p>
+        {% endif %}
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="actions">
+        <a href="{{ url_for('add_entry') }}">+ Add Entry</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,605 @@
+/* static/css/style.css */
+
+/* —————————————————————————————————————————
+   Root & Global
+————————————————————————————————————————— */
+:root {
+  --color-bg-start:  #0F172A;
+  --color-bg-end:    #1E293B;
+  --color-card-bg:   rgba(15, 23, 42, 0.85);
+  --color-accent:    #3B82F6;
+  --color-highlight:#FBBF24;
+  --color-text:      #E2E8F0;
+  --color-input-bg:  rgba(255, 255, 255, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--color-text);
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.05) 0,
+      rgba(255,255,255,0.05) 2px,
+      transparent 2px,
+      transparent 8px
+    ),
+    linear-gradient(135deg, var(--color-bg-start), var(--color-bg-end));
+  overflow-x: hidden;
+}
+
+/* —————————————————————————————————————————
+   Login/Register Card
+————————————————————————————————————————— */
+.login-card,
+.register-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--color-card-bg);
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  margin: auto;             /* vertically/horizontally center */
+  margin-top: 4rem;         /* clear nav */
+}
+
+.login-card img.logo,
+.register-card img.logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 1.5rem;
+}
+
+label {
+  align-self: flex-start;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.5rem;
+  border: 2px solid transparent;
+  border-radius: 0.5rem;
+  background: var(--color-input-bg);
+  color: var(--color-text);
+  transition: border-color 0.2s;
+}
+input:focus {
+  outline: none;
+  border-color: var(--color-highlight);
+}
+
+button {
+  margin-top: 1.75rem;
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--color-highlight);
+  color: #0F172A;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+}
+
+a {
+  color: var(--color-highlight);
+  text-decoration: none;
+  font-weight: 500;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+.show-password {
+  display: flex;
+  align-items: center;
+  margin-top: 0.25rem;
+  cursor: pointer;
+  user-select: none;
+}
+.show-password input[type="checkbox"] {
+  display: none;
+}
+.show-password span {
+  font-size: 0.85rem;
+  color: var(--color-highlight);
+}
+
+/* —————————————————————————————————————————
+   Skinny Top Navigation Bar
+————————————————————————————————————————— */
+.top-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.2rem 1rem;
+  background: rgba(15,23,42,0.8);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
+}
+
+.top-nav .logo-container {
+  display: flex;
+  align-items: center;
+}
+.top-nav .logo-container img.nav-logo {
+  height: 1.5rem;
+  margin-right: 0.5rem;
+}
+.top-nav .logo-container .app-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-highlight);
+}
+
+.top-nav .nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.top-nav .nav-links a,
+.top-nav .nav-links form button {
+  padding: 0.4rem 0.8rem;
+  background: rgba(255,255,255,0.1);
+  color: var(--color-text);
+  border: 2px solid var(--color-highlight);
+  border-radius: 0.25rem;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s;
+}
+.top-nav .nav-links a:hover,
+.top-nav .nav-links form button:hover {
+  background: var(--color-highlight);
+  color: #0F172A;
+}
+
+/* —————————————————————————————————————————
+   Dashboard Card & Scrollable List
+————————————————————————————————————————— */
+.dashboard-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 2rem 0;
+}
+
+.dashboard-card {
+  background: var(--color-card-bg);
+  padding: 2.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 15px 45px rgba(0,0,0,0.5);
+  width: 90%;
+  max-width: 1200px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  margin-top: 3.5rem;
+}
+
+.dashboard-card img.logo {
+  width: 100px;
+  height: auto;
+  display: block;
+  margin: 0 auto 1.0rem;
+}
+
+.dashboard-header {
+  font-size: 2rem;
+  font-weight: 600;
+  border-bottom: 3px solid var(--color-highlight);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.scrollable-entries {
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 0.5rem;
+  margin-bottom: 1rem;
+  max-height: calc(6 * 3.5rem);
+}
+
+.entry-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.entry-table th,
+.entry-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(226,232,240,0.2);
+}
+
+.entry-table th {
+  background: rgba(255,255,255,0.1);
+  font-weight: 500;
+}
+
+.entry-table tr:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.actions a {
+  background: var(--color-highlight);
+  color: #0F172A;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.actions a:hover {
+  background: var(--color-accent);
+}
+
+/* Webkit scrollbar */
+.scrollable-entries::-webkit-scrollbar {
+  width: 8px;
+}
+.scrollable-entries::-webkit-scrollbar-thumb {
+  background: rgba(226,232,240,0.3);
+  border-radius: 4px;
+}
+/* Fix nav‐link alignment so Dashboard and Logout sit side-by-side */
+.top-nav {
+  align-items: center; /* ensure vertical centering */
+}
+
+.top-nav .nav-links {
+  display: flex;
+  flex-direction: row;
+  align-items: center; /* center the links and button */
+  gap: 0.5rem;
+  margin: 0; /* remove any extra margin */
+}
+/* —————————————————————————————————————————
+   Keep table header fixed inside .scrollable-entries
+————————————————————————————————————————— */
+.scrollable-entries {
+  position: relative; /* establish containing block for sticky */
+}
+
+.entry-table thead th {
+  position: sticky;
+  top: 0;                  /* stick to top of .scrollable-entries */
+  background: rgba(15,23,42,0.85); /* same as card bg for seamless look */
+  color: var(--color-text);
+  z-index: 2;              /* above the rows */
+}
+.top-nav .nav-links a,
+.top-nav .nav-links form button {
+  margin: 0;               /* no top/bottom offsets */
+  line-height: 1;          /* collapse to its padding height */
+  display: inline-flex;    
+  align-items: center;     /* center text vertically */
+  justify-content: center; /* center text horizontally */
+  padding: 0.4rem 0.8rem;
+}
+/* —————————————————————————————————————————
+   Form Inputs (include URL & Textarea)
+————————————————————————————————————————— */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="url"],
+textarea {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--color-input-bg);
+  color: var(--color-text);
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+/* Make the textarea vertically resizable only */
+textarea {
+  resize: vertical;
+  min-height: 4rem;
+  max-height: 12rem;
+}
+/* Make Dashboard & Logout buttons equal width and centered */
+.top-nav .nav-links a,
+.top-nav .nav-links form button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 9ch !important;   /* force same width */
+  white-space: nowrap;     /* prevent wrapping */
+}
+/* —————————————————————————————————————————
+   Nav-Left & Nav-Right Button Layout
+————————————————————————————————————————— */
+.top-nav {
+  justify-content: space-between;
+}
+
+.top-nav .nav-left,
+.top-nav .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.top-nav .nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.8rem;
+  background: rgba(255,255,255,0.1);
+  color: var(--color-text);
+  border: 2px solid var(--color-highlight);
+  border-radius: 0.25rem;
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.top-nav .nav-btn:hover {
+  background: var(--color-highlight);
+  color: #0F172A;
+}
+
+.inline-form {
+  display: inline-flex;
+}
+
+.inline-form button {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+/* Vertically center Logout next to LockBox */
+.top-nav .nav-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.top-nav .nav-left form {
+  display: inline-flex;
+  align-items: center;
+}
+
+.top-nav .nav-left form button {
+  /* match the LockBox font size & padding */
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-highlight);
+  background: none;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  line-height: 1;
+}
+/* Force top-nav to a fixed, slim height */
+.top-nav {
+  height: 3rem;          /* pick a height that fits your design */
+  align-items: center;   /* ensure children are vertically centered */
+}
+
+/* Make Logout span the full nav height */
+.top-nav .nav-left form button {
+  height: 100%;          /* fill the 3rem nav */
+  line-height: 1;        /* normalize text centering */
+  padding: 0 0.8rem;     /* keep your horizontal padding */
+}
+/* Make Edit/Delete smaller and pill-shape the Delete button */
+.entry-table td a,
+.entry-table td form button {
+  font-size: 0.8rem;            /* smaller text */
+  padding: 0.25rem 0.5rem;      /* tighter padding */
+}
+
+.entry-table td a {
+  background: var(--color-accent);  /* you can keep blue for Edit */
+  color: #fff;
+  border-radius: 0.25rem;
+}
+
+.entry-table td form button {
+  background: transparent;         /* transparent background */
+  color: var(--color-highlight);   /* yellow text */
+  border: 2px solid var(--color-highlight);
+  border-radius: 9999px;           /* full pill */
+}
+
+.entry-table td form button:hover {
+  background: var(--color-highlight);
+  color: #0F172A;
+}
+/* —————————————————————————————————————————
+   Action Buttons: Edit & Delete
+————————————————————————————————————————— */
+.entry-table td .edit-btn {
+  background: var(--color-highlight);
+  color: #0F172A;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 0.25rem;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.entry-table td .edit-btn:hover {
+  background: var(--color-accent);
+}
+
+/* Delete button (already a <button>) */
+.entry-table td form button {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  background: transparent;
+  color: var(--color-highlight);
+  border: 2px solid var(--color-highlight);
+  border-radius: 9999px;
+  transition: background 0.2s, color 0.2s;
+}
+.entry-table td form button:hover {
+  background: var(--color-highlight);
+  color: #0F172A;
+}
+/* —————————————————————————————————————————
+   Table URLs: match theme instead of blue
+————————————————————————————————————————— */
+/* Target only table links that are not .edit-btn */
+.entry-table td a:not(.edit-btn) {
+  color: var(--color-text);       /* same as your body text */
+  text-decoration: underline;     /* keep underlined for clarity */
+}
+
+.entry-table td a:not(.edit-btn):hover {
+  color: var(--color-highlight);  /* yellow on hover */
+}
+/* —————————————————————————————————————————
+   Reset non-Edit links in table to plain text style
+————————————————————————————————————————— */
+.entry-table td a:not(.edit-btn) {
+  /* remove any previous pill/box styling */
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  display: inline !important;
+
+  /* on-theme text color */
+  color: var(--color-text) !important;
+  text-decoration: underline;
+  outline: none;
+}
+
+.entry-table td a:not(.edit-btn):hover {
+  color: var(--color-highlight) !important;
+}
+/* —————————————————————————————————————————
+   Keep Edit & Delete on the same line
+————————————————————————————————————————— */
+/* Never wrap the action cell contents */
+.entry-table td:last-child {
+  white-space: nowrap;
+}
+
+/* Ensure Edit link and Delete form are inline-flex */
+.entry-table td:last-child .edit-btn,
+.entry-table td:last-child form {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  gap: 0.25rem;
+}
+
+/* Optional: remove the manual “|” separator and rely on gap */
+.entry-table td:last-child .separator {
+  display: none;
+}
+/* ————————————————————————————————————————
+   Force Actions cell to a single flex line
+—————————————————————————————————————————— */
+.entry-table td:last-child {
+  display: flex !important;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+/* Remove any leftover separator span if you wrapped the pipe */
+.entry-table td:last-child .separator {
+  display: none;
+}
+/* —————————————————————————————————————————
+   Actions‐cell flex layout
+————————————————————————————————————————— */
+.entry-table td.actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+/* Tweak the Delete button into a thin pill */
+.delete-btn {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  background: transparent;
+  color: var(--color-highlight);
+  border: 2px solid var(--color-highlight);
+  border-radius: 9999px;
+  transition: background 0.2s, color 0.2s;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background: var(--color-highlight);
+  color: #0F172A;
+}
+
+/* And ensure your Edit pill stays the same: */
+.edit-btn {
+  background: var(--color-highlight);
+  color: #0F172A;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.edit-btn:hover {
+  background: var(--color-accent);
+}
+.copy-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-highlight);
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  border: 2px solid var(--color-highlight);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.copy-btn:hover {
+  background: var(--color-highlight);
+  color: #0F172A;
+}

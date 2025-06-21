@@ -1,0 +1,143 @@
+/* static/css/dashboard.css */
+
+/* —————————————————————————————————————————
+   Top‐Right Navigation
+————————————————————————————————————————— */
+.top-nav {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  z-index: 100;
+}
+.top-nav a,
+.top-nav form button {
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  background: var(--color-card-bg);
+  color: var(--color-text);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.top-nav a:hover,
+.top-nav form button:hover {
+  background: rgba(226,232,240,0.1);
+}
+/* Make Logout button slightly smaller horizontally */
+.top-nav form button {
+  padding: 0.4rem 0.8rem;
+}
+
+/* —————————————————————————————————————————
+   Dashboard Wrapper & Card
+————————————————————————————————————————— */
+.dashboard-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 2rem;
+  overflow: hidden; /* prevent outer scroll */
+}
+
+.dashboard-card {
+  background: var(--color-card-bg);
+  padding: 2.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 15px 45px rgba(0,0,0,0.5);
+  width: 90%;
+  max-width: 1200px;
+  max-height: 80vh;      /* limit height */
+  display: flex;
+  flex-direction: column;
+}
+
+/* —————————————————————————————————————————
+   Logo & Header
+————————————————————————————————————————— */
+.logo {
+  display: block;
+  margin: 0 auto 1.5rem;
+  width: 120px;
+  height: auto;
+}
+
+.dashboard-header {
+  font-size: 2rem;
+  font-weight: 600;
+  border-bottom: 3px solid var(--color-highlight);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+/* —————————————————————————————————————————
+   Scrollable Entries List
+————————————————————————————————————————— */
+.scrollable-entries {
+  overflow-y: auto;
+  flex: 1;                /* grow to fill card body */
+  margin-bottom: 1rem;
+  padding-right: 0.5rem;  /* room for scrollbar */
+  max-height: calc(4 * 3.5rem); /* approx 4 rows */
+}
+
+.entry-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.entry-table th,
+.entry-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(226,232,240,0.2);
+}
+
+.entry-table th {
+  background: rgba(255,255,255,0.1);
+  font-weight: 500;
+}
+
+.entry-table tr:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+/* —————————————————————————————————————————
+   Footer Actions (center Add Entry)
+————————————————————————————————————————— */
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.actions a {
+  background: var(--color-highlight);
+  color: #0F172A;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.actions a:hover {
+  background: var(--color-accent);
+}
+
+/* Optional: custom scrollbar (Webkit) */
+.scrollable-entries::-webkit-scrollbar {
+  width: 8px;
+}
+.scrollable-entries::-webkit-scrollbar-thumb {
+  background: rgba(226,232,240,0.3);
+  border-radius: 4px;
+}
