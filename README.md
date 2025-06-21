@@ -55,8 +55,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 docker compose up -d
 ```
-
-Access the application at http://localhost:5001
+Access the application at http://localhost:5000
 
 ## First Time Use
 
