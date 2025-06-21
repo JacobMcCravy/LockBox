@@ -52,7 +52,6 @@ sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-
 
 # update permissions
 sudo chmod +x /usr/local/bin/docker-compose
-docker compose up -d
 
 docker compose up -d
 ```
