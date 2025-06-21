@@ -11,8 +11,6 @@ If you find a security vulnerability in LockBox, please:
    - How to reproduce it
    - Potential impact
 
-We'll work with you to fix it before any public disclosure.
-
 ## Security Best Practices
 
 - Keep your `.env` file secure - it contains your encryption keys
