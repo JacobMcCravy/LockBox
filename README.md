@@ -39,6 +39,21 @@ python app.py
 
 ### Option 2: Docker
 ```bash
+# Linux/Debian Installation
+
+# update
+sudo apt update && sudo apt upgrade -y
+
+# Install docker
+sudo apt install docker-ce
+
+# Install docker compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+# update permissions
+sudo chmod +x /usr/local/bin/docker-compose
+docker compose up -d
+
 docker compose up -d
 ```
 
