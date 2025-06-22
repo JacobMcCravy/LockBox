@@ -110,4 +110,4 @@ cp .env backups/.env_backup
 ## Video Demo
 
 This is the link to the video demontration of the site:
-[Video Demo](https://drive.google.com/file/d/1NNdtKLECa2qwIdmkYKWF8LgkGlorJH6n/view?usp=sharing){:target="_blank"}
+[Video Demo](https://drive.google.com/file/d/1NNdtKLECa2qwIdmkYKWF8LgkGlorJH6n/view?usp=sharing)
