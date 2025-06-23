@@ -1,0 +1,10 @@
+Adding a new password:
+
+To add a first select Add Entry, enter the name you wish to use to the Title entry, your Username for the site, your password, 
+and the URL for the site. A note can optionally be added if the user wishes, containing additional information.
+
+Once a password is saved it can be edited by selecting the corresponding action button, or deleted if no longer necessary.
+
+Changing Account Settings:
+
+Under the settings tab a user has the ability to Change their Display Name, Update their account password, or delete the account.
